@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="all" name="all">
+    <target name="all" depends="staticCounting,staticRecommendation,staticExecution,staticEstimation"/>
+
+    <target name="staticCounting">
+        <jar destfile="staticCounting.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="dna.gds.analysis.StaticCounting"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/Users/benni/TUD/Projects/ArgList/bin"/>
+            <fileset dir="../java/bin"/>
+            <fileset dir="../../DNA/config"/>
+            <fileset dir="../../DNA/bin"/>
+            <zipgroupfileset dir="../../DNA/lib/" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <target name="staticRecommendation">
+        <jar destfile="staticRecommendation.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="dna.gds.analysis.StaticRecommendation"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/Users/benni/TUD/Projects/ArgList/bin"/>
+            <fileset dir="../java/bin"/>
+            <fileset dir="../../DNA/config"/>
+            <fileset dir="../../DNA/bin"/>
+            <zipgroupfileset dir="../../DNA/lib/" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <target name="staticExecution">
+        <jar destfile="staticExecution.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="dna.gds.analysis.StaticExecution"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/Users/benni/TUD/Projects/ArgList/bin"/>
+            <fileset dir="../java/bin"/>
+            <fileset dir="../../DNA/config"/>
+            <fileset dir="../../DNA/bin"/>
+            <zipgroupfileset dir="../../DNA/lib/" includes="**/*.jar" />
+        </jar>
+    </target>
+
+    <target name="staticEstimation">
+        <jar destfile="staticEstimation.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="dna.gds.analysis.StaticEstimation"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/Users/benni/TUD/Projects/ArgList/bin"/>
+            <fileset dir="../java/bin"/>
+            <fileset dir="../../DNA/config"/>
+            <fileset dir="../../DNA/bin"/>
+            <zipgroupfileset dir="../../DNA/lib/" includes="**/*.jar" />
+        </jar>
+    </target>
+</project>
