@@ -22,7 +22,7 @@ public class Dataset {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		String dir = "/Users/benni/TUD/datasets/dynamic/Konect/datasets/";
-		String filename = "W.txt";
+		String filename = "FB.txt";
 		String name = "FB";
 		GraphDataStructure gds = GDS.undirected();
 		KonectEdgeType edgeType = KonectEdgeType.ADD_REMOVE;
@@ -35,12 +35,12 @@ public class Dataset {
 		GraphGenerator gg = new KonectGraph(reader, graphType, graphParameter);
 
 		KonectBatchType batchType = KonectBatchType.PROCESSED_EDGES;
-		String batchParameter = "100";
+		String batchParameter = "50";
 		BatchGenerator bg = new KonectBatch(reader, batchType, batchParameter);
 
 		int batches = 1000;
 
-		String dst = "datasets/W-" + graphParameter + "-" + batchParameter
+		String dst = "datasets/FB-" + graphParameter + "-" + batchParameter
 				+ "/";
 		if (!(new File(dir)).exists()) {
 			(new File(dir)).mkdirs();
