@@ -1,3 +1,7 @@
 build/*.jar
+datasets/
 deploy/jobs*
-deploy/data
+deploy/data*
+deploy/*.jar
+java/config
+java/measurements
