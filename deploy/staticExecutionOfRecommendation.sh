@@ -12,9 +12,10 @@ function executionOfRecommendation {
 	run=$5
 	aggregationType=$6
 	fitType=$7
-	name=$8
+	recommendationType=$8
+	name=$9
 
-	gdsString=$(tail -n 1 "$mainRecommendationDir/$datasetName/$aggregationType/$fitType/$name.recommendation")
+	gdsString=$(tail -n 1 "$mainRecommendationDir/$datasetName/$aggregationType/$fitType/$recommendationType.recommendation")
 	dst="$mainExecutionDir/$datasetName/$metricTypes/$batches/$name--$gdsString"
 	if [[ ! -d "$dst/" ]]; then mkdir -p "$dst/"; fi
 	if [[ ! -f "$dst/$run.dat" ]]; then
@@ -24,9 +25,9 @@ function executionOfRecommendation {
 	fi
 }
 
-if [[ $# != 8 ]]; then
-	>&2 echo "8 arguments expected, $# given"
-	>&2 echo 'staticExecutionOfRecommendation.sh $datasetName $datasetDir $metricTypes $batches $run $aggregationType $fitType $name'
+if [[ $# != 9 ]]; then
+	>&2 echo "9 arguments expected, $# given"
+	>&2 echo 'staticExecutionOfRecommendation.sh $datasetName $datasetDir $metricTypes $batches $run $aggregationType $fitType $recommendationType $name'
 else
-	executionOfRecommendation $1 $2 $3 $4 $5 $6 $7 $8
+	executionOfRecommendation $1 $2 $3 $4 $5 $6 $7 $8 $9
 fi

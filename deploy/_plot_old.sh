@@ -28,7 +28,7 @@ function plotExecutionTime {
 	echo "f(x) = 0"
 	echo "plot f(x) notitle, \\"
 	i=1
-	for setup in $(ls $dir | grep -v '1-20--'); do
+	for setup in $(ls $dir); do
 		name=$setup
 		if [[ $name = default* ]]; then array=(${name//--/ }); name="${array[2]}"; fi
 		echo "'-' using 1:(\$5/1000/1000/1000) with boxes lt $i title '$name', \\"
@@ -37,7 +37,7 @@ function plotExecutionTime {
 	done
 	echo "f(x) notitle"
 	i=1
-	for setup in $(ls $dir | grep -v '1-20--'); do
+	for setup in $(ls $dir); do
 		aggr=$(tail -n 1 $dir/$setup/aggr)
 		echo "$i	$aggr"
 		echo "EOF"
@@ -58,26 +58,20 @@ function plotExecutionSpeedup {
 	if [[ ! -d "$plotDir" ]]; then mkdir -p $plotDir; fi
 	output="$plotDir/speedup--$metrics.png"
 	echo "set terminal png size 1024,800"
-	output="$plotDir/speedup--$metrics.pdf"
-	echo "set terminal pdf font ',18'"
 	echo "set output '$output'"
-	echo "set key top left"
+	echo "set key outside"
 	echo "set style fill solid border -1"
-	# echo "set title '$dataset: $(metricName $metrics) ($batches batches)'"
-	echo "set xtics ('cfg*' 1, 'A' 2, 'AL' 3, 'HAL' 4, 'HM' 5, 'HS' 6, 'HT' 7, 'LL' 8)"
-	echo "set xtics rotate by -45 offset 0,0"
+	echo "set title '$dataset: $(metricName $metrics) ($batches batches)'"
 	echo "set boxwidth 0.8"
-	echo "set ylabel 'speedup (relative to cfg*)'"
-	echo "set yrange [0:6]"
+	echo "set ylabel 'speedup (relative to our recommendation)'"
 	echo "f(x) = 0"
-	echo "set arrow from 0,1 to 9,1 lw 4 nohead front"
+	echo "set arrow from 0,1 to 14,1 lw 2 nohead front"
 	echo "plot f(x) notitle, \\"
 	i=1
-	for setup in $(ls $dir | grep -v '1-20--'); do
+	for setup in $(ls $dir); do
 		name=$setup
 		if [[ $name = default* ]]; then array=(${name//--/ }); name="${array[2]}"; fi
-		echo "'-' using 1:(\$5/\$10) with boxes lt $i notitle, \\"
-		# echo "'-' using 1:(\$5/\$10) with boxes lt $i title '$name', \\"
+		echo "'-' using 1:(\$5/\$10) with boxes lt $i title '$name', \\"
 		i=$((i+1))
 	done
 	echo "f(x) notitle"
@@ -90,7 +84,7 @@ function plotExecutionSpeedup {
 		break
 	done
 	i=1
-	for setup in $(ls $dir | grep -v '1-20--'); do
+	for setup in $(ls $dir); do
 		aggr=$(tail -n 1 $dir/$setup/aggr)
 		echo "$i	$aggr	$recommendation"
 		echo "EOF"
@@ -141,7 +135,7 @@ function plotExecutionEstimation {
 		break
 	done
 	i=1
-	for setup in $(ls $dir | grep -v '1-20--'); do
+	for setup in $(ls $dir); do
 		aggr=$(tail -n 1 $dir/$setup/aggr)
 		echo "$i	$aggr	$recommendation"
 		echo "EOF"
@@ -244,40 +238,6 @@ function plotForBatchesRelative {
 	done
 }
 
-function printCountDataBatch {
-	printCountDataLine $1 $2 "$2_INIT" "init"
-	printCountDataLine $1 $2 "$2_ADD_SUCCESS" "add_s"
-	# printCountDataLine $1 $2 "$2_ADD_FAILURE" "add_f"
-	# printCountDataLine $1 $2 "$2_RANDOM_ELEMENT" "rand"
-	printCountDataLine $1 $2 "$2_SIZE" "size"
-	# printCountDataLine $1 $2 "$2_ITERATE" "iter"
-	# printCountDataLine $1 $2 "$2_CONTAINS_SUCCESS" "cont_s"
-	printCountDataLine $1 $2 "$2_CONTAINS_FAILURE" "cont_f"
-	printCountDataLine $1 $2 "$2_GET_SUCCESS" "get_s"
-	# printCountDataLine $1 $2 "$2_GET_FAILURE" "get_f"
-	printCountDataLine $1 $2 "$2_REMOVE_SUCCESS" "rem_s"
-	# printCountDataLine $1 $2 "$2_REMOVE_FAILURE" "rem_f"
-}
-
-function printCountDataMetric {
-	# printCountDataLine $1 $2 "$2_INIT" "init"
-	# printCountDataLine $1 $2 "$2_ADD_SUCCESS" "add_s"
-	# printCountDataLine $1 $2 "$2_ADD_FAILURE" "add_f"
-	# printCountDataLine $1 $2 "$2_RANDOM_ELEMENT" "rand"
-	printCountDataLine $1 $2 "$2_SIZE" "size"
-	printCountDataLine $1 $2 "$2_ITERATE" "iter"
-	printCountDataLine $1 $2 "$2_CONTAINS_SUCCESS" "cont_s"
-	printCountDataLine $1 $2 "$2_CONTAINS_FAILURE" "cont_f"
-	# printCountDataLine $1 $2 "$2_GET_SUCCESS" "get_s"
-	# printCountDataLine $1 $2 "$2_GET_FAILURE" "get_f"
-	# printCountDataLine $1 $2 "$2_REMOVE_SUCCESS" "rem_s"
-	# printCountDataLine $1 $2 "$2_REMOVE_FAILURE" "rem_f"
-}
-
-function printCountDataLine {
-	cat $1 | grep "^$2_" | tr = "\t" | tail -n 12 | grep "$3" | sed "s/$3/$4/g"
-}
-
 function plotCounts {
 	srcDir=$1
 	srcFilename=$2
@@ -286,73 +246,65 @@ function plotCounts {
 
 	if [[ ! -d $dstDir ]]; then mkdir -p $dstDir; fi
 
+	echo "set terminal png size 1024,800"
+	echo "set output '$dstDir/$dstFilename.png'"
 	echo "set style fill solid border -1"
-	echo "set key top left"
-	echo "set boxwidth 1.0"
+	echo "set title '$dataset: $srcFilename'"
+	echo "set boxwidth 0.8"
 	echo "f(x) = 0"
 	echo "set xtics rotate by -45 offset 0,0"
-	echo "set logscale y"
+	echo "set multiplot layout 4,1"
 
-	echo "set terminal pdf font ',14'"
-	echo "set xtics font ',18'"
-	echo "set ylabel 'operation counts c_l(o)'"
-
-	### metrics
-	echo "set output '$dstDir/metric-$dstFilename.pdf'"
-	echo "set yrange [0.1:1000000]"
-	echo "set xrange [3.5:18.5]"
-
-	echo "plot	'-' using (\$1*4+0):(\$3/100) with boxes lt 1 title 'V', \\"
-	echo "		'-' using (\$1*4+1):(\$3/100):xtic(2) with boxes lt 2 title 'E', \\"
-	echo "		'-' using (\$1*4+2):(\$3/100) with boxes lt 3 title 'adj'"
-	printCountDataMetric $srcDir/$srcFilename "V" | awk '{printf "%d\t%s\n", NR, $0}'
+	echo "plot	'-' using 1:3 with boxes lt 1 title 'V'"
+	cat $srcDir/$srcFilename | grep '^V_' | tr = "\t" | awk '{printf "%d\t%s\n", NR, $0}'
 	echo "EOF"
-	printCountDataMetric $srcDir/$srcFilename "E" | awk '{printf "%d\t%s\n", NR, $0}'
+	echo "unset title"
+	echo "plot	'-' using 1:3 with boxes lt 2 title 'E'"
+	cat $srcDir/$srcFilename | grep '^E_' | tr = "\t" | awk '{printf "%d\t%s\n", NR, $0}'
 	echo "EOF"
-	printCountDataMetric $srcDir/$srcFilename "adj" | awk '{printf "%d\t%s\n", NR, $0}'
+	echo "plot	'-' using 1:3 with boxes lt 3 title 'adj'"
+	cat $srcDir/$srcFilename | grep '^adj_' | tr = "\t" | awk '{printf "%d\t%s\n", NR, $0}'
+	echo "EOF"
+	echo "set yrange [0:1]"
+	echo "plot	'-' using 1:(0):xtic(2) with boxes lt 3 notitle"
+	cat $srcDir/$srcFilename | grep '^adj_' | tr = "\t" | awk '{printf "%d\t%s\n", NR, $0}'
 	echo "EOF"
 
-	### batches
-	echo "set output '$dstDir/batch-$dstFilename.pdf'"
-	echo "set yrange [0.1:100000]"
-	echo "set xrange [3.5:26.5]"
-
-	echo "plot	'-' using (\$1*4+0):3 with boxes lt 1 title 'V', \\"
-	echo "		'-' using (\$1*4+1):3:xtic(2) with boxes lt 2 title 'E', \\"
-	echo "		'-' using (\$1*4+2):3 with boxes lt 3 title 'adj'"
-	printCountDataBatch $srcDir/$srcFilename "V" | awk '{printf "%d\t%s\n", NR, $0}'
-	echo "EOF"
-	printCountDataBatch $srcDir/$srcFilename "E" | awk '{printf "%d\t%s\n", NR, $0}'
-	echo "EOF"
-	printCountDataBatch $srcDir/$srcFilename "adj" | awk '{printf "%d\t%s\n", NR, $0}'
-	echo "EOF"
+	# echo "plot	'-' using (\$1*3+0):3 with boxes lt 1 title 'V', \\"
+	# echo "		'-' using (\$1*3+1):3:xtic(2) with boxes lt 2 title 'E', \\"
+	# echo "		'-' using (\$1*3+2):3 with boxes lt 3 title 'adj'"
+	# cat $srcDir/$srcFilename | grep '^V_' | tr = "\t" | awk '{printf "%d\t%s\n", NR, $0}'
+	# echo "EOF"
+	# cat $srcDir/$srcFilename | grep '^E_' | tr = "\t" | awk '{printf "%d\t%s\n", NR, $0}'
+	# echo "EOF"
+	# cat $srcDir/$srcFilename | grep '^adj_' | tr = "\t" | awk '{printf "%d\t%s\n", NR, $0}'
+	# echo "EOF"
 }
 
+main=$mainExecutionDir
+for dataset in $(ls $main); do
+	echo "$dataset"
+	for metrics in $(ls $main/$dataset); do
+		echo "  $metrics"
+		for batches in $(ls $main/$dataset/$metrics); do
+			echo "    $batches"
+			plotExecutionTime $main $dataset $metrics $batches | gnuplot
+			plotExecutionSpeedup $main $dataset $metrics $batches | gnuplot
+			# plotExecutionEstimation $main $dataset $metrics $batches
+			# plotExecutionEstimation $main $dataset $metrics $batches | gnuplot
+			# exit
+		done
+		echo "    forBatches"
+		plotForBatchesAbsolute $main $dataset $metrics | gnuplot
+		plotForBatchesRelative $main $dataset $metrics | gnuplot
+	done
+done
+
 # main=$mainRecommendationCountsDir
-# for dataset in $(ls $main | grep "pnb7\|FB-1000-100"); do
+# for dataset in $(ls $main); do
 # 	echo "$dataset"
-# 	for count in $(ls $main/$dataset | grep "R-\|b."); do
+# 	for count in $(ls $main/$dataset); do
 # 		echo "  $count"
 # 		plotCounts $main/$dataset $count $mainPlotDir/counts/$dataset ${count/'.counts'/''} | gnuplot
 # 	done
 # done
-# exit
-
-
-main=$mainExecutionDir
-for dataset in $(ls $main | grep "pnb7\|FB-1000-100"); do
-	echo "$dataset"
-	for metrics in $(ls $main/$dataset); do
-		echo "  $metrics"
-		for batches in $(ls $main/$dataset/$metrics | grep "19999\|200" | grep -v "20001"); do
-			echo "    $batches"
-			# plotExecutionTime $main $dataset $metrics $batches | gnuplot
-			plotExecutionSpeedup $main $dataset $metrics $batches | gnuplot
-			# plotExecutionEstimation $main $dataset $metrics $batches
-			# plotExecutionEstimation $main $dataset $metrics $batches | gnuplot
-		done
-		# echo "    forBatches"
-		# plotForBatchesAbsolute $main $dataset $metrics | gnuplot
-		# plotForBatchesRelative $main $dataset $metrics | gnuplot
-	done
-done

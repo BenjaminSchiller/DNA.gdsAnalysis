@@ -12,7 +12,7 @@ with open(fileName, "r") as ins:
 	for line in ins:
 		if line.startswith(prefix):
 			# print line.replace(prefix,'').replace('\n','')
-			values.append(int(line.replace(prefix,'').replace('\n','')))
+			values.append(float(line.replace(prefix,'').replace('\n','')))
 
 if len(values) == 0:
 	print "0	0	0	0	0"

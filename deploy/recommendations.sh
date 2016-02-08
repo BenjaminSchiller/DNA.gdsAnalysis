@@ -52,7 +52,46 @@ function list {
 				for r in $(ls $main/$ds/$at/$ft); do
 					dss=$(tail -n 1 $main/$ds/$at/$ft/$r)
 					name=${r/.recommendation/}
-					echo "$name: $dss"
+					echo "$ds - $name: $dss"
+				done
+			done
+		done
+	done
+}
+
+function name {
+	if [[ $1 == "DArray" ]]; then
+		echo "A"
+	elif [[ $1 == "DArrayList" ]]; then
+		echo "AL"
+	elif [[ $1 == "DHashArrayList" ]]; then
+		echo "HAL"
+	elif [[ $1 == "DHashMap" ]]; then
+		echo "HM"
+	elif [[ $1 == "DHashSet" ]]; then
+		echo "HS"
+	elif [[ $1 == "DHashTable" ]]; then
+		echo "HT"
+	elif [[ $1 == "DLinkedList" ]]; then
+		echo "LL"
+	else
+		echo "unknown"
+	fi
+}
+
+function rows {
+	for ds in $(ls $main); do
+		echo $ds
+		for at in $(ls $main/$ds); do
+			echo $at
+			for ft in $(ls $main/$ds/$at); do
+				echo $ft
+				for r in $(ls $main/$ds/$at/$ft); do
+					dss=$(tail -n 1 $main/$ds/$at/$ft/$r)
+					name=${r/.recommendation/}
+					name=${name/1-20-/}
+					entries=(${dss//--/ })
+					echo "$ds & $name & $(name ${entries[0]}) & $(name ${entries[1]}) & $(name ${entries[2]}) \\\\"
 				done
 			done
 		done
@@ -60,15 +99,21 @@ function list {
 }
 
 
-echo "# # # # # # # # # # # # # # # # #"
-echo "# by AGGREGATION TYPE"
-echo "# # # # # # # # # # # # # # # # #"
-compareByAT
-echo
-echo
-echo "# # # # # # # # # # # # # # # # #"
-echo "# by FIT TYPE"
-echo "# # # # # # # # # # # # # # # # #"
-compareByFT
-echo
-echo
+# echo "# # # # # # # # # # # # # # # # #"
+# echo "# by AGGREGATION TYPE"
+# echo "# # # # # # # # # # # # # # # # #"
+# compareByAT
+# echo
+# echo
+# echo "# # # # # # # # # # # # # # # # #"
+# echo "# by FIT TYPE"
+# echo "# # # # # # # # # # # # # # # # #"
+# compareByFT
+# echo
+# echo
+
+# list
+
+rows
+
+
